@@ -27,6 +27,8 @@ export const expenseSchema = z.object({
   description: z.string().optional(),
   date: z.date().default(new Date()),
   vehicleId: z.string().optional(),
+  receiptUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  organizationId: z.string().min(1),
 });
 
 // Invoices
@@ -65,4 +67,16 @@ export const maintenanceRecordSchema = z.object({
   cost: z.number().nonnegative(),
   date: z.date().default(new Date()),
   nextDueDate: z.date().optional(),
+  organizationId: z.string().min(1),
+});
+
+// Vehicle Documents
+export const vehicleDocumentSchema = z.object({
+  name: z.string().min(1, "Document name is required"),
+  type: z.enum(["INSURANCE", "REGISTRATION", "POLLUTION", "SERVICE_INVOICE", "OTHER"]),
+  url: z.string().url("Valid URL required"),
+  size: z.number().optional(),
+  expiryDate: z.date().optional(),
+  vehicleId: z.string().min(1, "Vehicle ID required"),
+  organizationId: z.string().min(1),
 });

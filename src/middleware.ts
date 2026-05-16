@@ -30,11 +30,12 @@ export const config = {
     /*
      * Match all request paths except for the ones starting with:
      * - api/auth (auth endpoints)
+     * - api/uploadthing (upload endpoints)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public files
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.svg$).*)",
+    "/((?!api/auth|api/uploadthing|_next/static|_next/image|favicon.ico|.*\\.svg$).*)",
   ],
 };

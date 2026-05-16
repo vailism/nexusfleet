@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Plus, Loader2 } from "lucide-react";
 import { Vehicle } from "@prisma/client";
+import { FileUpload } from "@/components/forms/FileUpload";
 
 interface ExpenseFormProps {
   vehicles: Vehicle[];
@@ -31,6 +32,8 @@ export function ExpenseForm({ vehicles }: ExpenseFormProps) {
       description: "",
       date: new Date(),
       vehicleId: "",
+      receiptUrl: "",
+      organizationId: "dummy-org-id", // Hardcoded for prototyping until NextAuth session binds orgId
     },
   });
 
@@ -117,6 +120,15 @@ export function ExpenseForm({ vehicles }: ExpenseFormProps) {
               id="description" 
               {...form.register("description")} 
               className="w-full min-h-[80px] rounded-md border border-input bg-background/50 px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Receipt / Attachment</Label>
+            <FileUpload 
+              endpoint="receiptUploader" 
+              value={form.watch("receiptUrl") || ""} 
+              onChange={(url) => form.setValue("receiptUrl", url || "")} 
             />
           </div>
 
