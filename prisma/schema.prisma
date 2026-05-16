@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String?
+  email     String   @unique
+  password  String
+  role      Role     @default(STAFF)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+model Customer {
+  id        String    @id @default(cuid())
+  name      String
+  email     String?
+  phone     String?
+  address   String?
+  invoices  Invoice[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Vehicle {
+  id                 String              @id @default(cuid())
+  make               String
+  model              String
+  year               Int
+  licensePlate       String              @unique
+  vin                String?             @unique
+  status             VehicleStatus       @default(ACTIVE)
+  driverName         String?
+  fuelLogs           FuelLog[]
+  maintenanceRecords MaintenanceRecord[]
+  expenses           Expense[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+enum VehicleStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  amount      Float
+  category    String
+  description String?
+  date        DateTime @default(now())
+  receiptUrl  String?
+  vehicleId   String?
+  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Invoice {
+  id         String        @id @default(cuid())
+  number     String        @unique
+  amount     Float
+  tax        Float         @default(0) // GST
+  total      Float
+  status     InvoiceStatus @default(PENDING)
+  dueDate    DateTime
+  notes      String?       @db.Text
+  terms      String?       @db.Text
+  customerId String
+  customer   Customer      @relation(fields: [customerId], references: [id])
+  items      InvoiceItem[]
+  payments   Payment[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+}
+
+model InvoiceItem {
+  id          String   @id @default(cuid())
+  description String
+  quantity    Float
+  unitPrice   Float
+  gstPercent  Float    @default(0)
+  discount    Float    @default(0)
+  total       Float
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  OVERDUE
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  amount    Float
+  date      DateTime @default(now())
+  method    String
+  invoiceId String
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model FuelLog {
+  id        String   @id @default(cuid())
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id])
+  liters    Float
+  cost      Float
+  odometer  Int
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model MaintenanceRecord {
+  id          String    @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle   @relation(fields: [vehicleId], references: [id])
+  serviceType String
+  description String?
+  cost        Float
+  date        DateTime  @default(now())
+  nextDueDate DateTime?
+  createdAt   DateTime  @default(now())
+}
