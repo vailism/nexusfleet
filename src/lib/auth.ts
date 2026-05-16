@@ -36,7 +36,6 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           email: user.email,
           name: user.name,
-          role: user.role,
         };
       }
     })
@@ -45,14 +44,18 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = (user as any).role;
+        // Fetch first organization for the user for the prototype
+        const member = await prisma.organizationMember.findFirst({
+          where: { userId: user.id },
+        });
+        token.organizationId = member?.organizationId;
       }
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
+      if (token && session.user) {
         (session.user as any).id = token.id;
-        (session.user as any).role = token.role;
+        (session.user as any).organizationId = token.organizationId;
       }
       return session;
     }

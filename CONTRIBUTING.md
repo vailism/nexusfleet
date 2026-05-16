@@ -1,26 +1,24 @@
 # Contributing to NexusFleet ERP
 
-First off, thank you for considering contributing to NexusFleet ERP. It's people like you that make NexusFleet such a great tool.
+Thank you for your interest in contributing! We follow a strict high-quality codebase standard.
 
-## Where do I go from here?
+## Branching Strategy
+- `main`: Production-ready code.
+- `develop`: Ongoing feature integration.
+- `feature/*`: New features.
+- `fix/*`: Bug fixes.
 
-If you've noticed a bug or have a feature request, make sure to check our [Issues](../../issues) to see if someone else in the community has already created a ticket. If not, go ahead and [make one](../../issues/new).
+## Development Workflow
+1. Fork the repository.
+2. Create a feature branch.
+3. Ensure all tests pass (`npm run test`).
+4. Run linting (`npm run lint`).
+5. Verify TypeScript types (`npm run typecheck`).
+6. Submit a Pull Request with a clear description of changes.
 
-## Fork & create a branch
-
-If this is something you think you can fix, then fork NexusFleet ERP and create a branch with a descriptive name.
-
-## Get the test suite running
-
-Make sure your local environment is set up according to the Installation instructions in the README. Ensure your code lints and passes type-checking before submitting a PR.
-
-```bash
-npm run lint
-npx tsc --noEmit
-```
-
-## Pull Request Process
-
-1. Ensure any install or build dependencies are removed before the end of the layer when doing a build.
-2. Update the README.md with details of changes to the interface, this includes new environment variables, exposed ports, useful file locations and container parameters.
-3. You may merge the Pull Request in once you have the sign-off of two other developers, or if you do not have permission to do that, you may request the second reviewer to merge it for you.
+## Code Standards
+- Use TypeScript for all logic.
+- Prefer Server Components where possible.
+- Use Server Actions for mutations.
+- Follow ShadCN UI patterns for components.
+- Ensure all forms have Zod validation.

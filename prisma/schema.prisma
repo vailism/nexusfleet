@@ -31,6 +31,8 @@ model Organization {
   vehicles     Vehicle[]
   expenses     Expense[]
   invoices     Invoice[]
+  auditLogs    AuditLog[]
+  documents    VehicleDocument[]
 }
 
 model User {
@@ -232,3 +234,32 @@ model MaintenanceRecord {
   nextDueDate DateTime?
   createdAt   DateTime  @default(now())
 }
+
+model AuditLog {
+  id             String       @id @default(cuid())
+  actorId        String
+  actorEmail     String
+  organizationId String
+  action         String
+  entityType     String
+  entityId       String?
+  metadata       Json?
+  ipAddress      String?
+  userAgent      String?
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id             String       @id @default(cuid())
+  userId         String
+  organizationId String
+  token          String       @unique
+  ipAddress      String?
+  userAgent      String?
+  deviceType     String?
+  lastActive     DateTime     @default(now())
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+}
+

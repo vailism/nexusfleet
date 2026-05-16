@@ -1,134 +1,85 @@
-# NexusFleet ERP 🚙📈
+# NexusFleet ERP SaaS v1.0.0
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+![NexusFleet Banner](https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=2000)
 
-**NexusFleet ERP** is a modern, production-grade SaaS application designed to seamlessly unify accounting, invoicing, and fleet management. Built with an "Apple-level" premium aesthetic, it provides businesses with robust operational tools, dynamic real-time analytics, and secure role-based access.
+**NexusFleet** is an enterprise-grade Fleet Management & ERP platform designed for modern logistics businesses. Built with a focus on premium aesthetics, multi-tenant security, and intelligent automation.
 
----
+## 🚀 Key Features
 
-## 🌟 Features
+- **Multi-Tenant Architecture**: Robust organization-level data isolation with role-based access control (RBAC).
+- **Fleet Management**: Track vehicles, fuel efficiency, and predictive maintenance schedules.
+- **Financial Engine**: Advanced invoicing with GST support, recurring expense tracking, and profit/loss analytics.
+- **AI Insights**: Intelligent trend detection, revenue forecasting, and anomaly alerts.
+- **SaaS Commercialization**: Integrated Stripe billing with tiered subscription plans (Starter, Business, Enterprise).
+- **Document Management**: Secure file uploads via UploadThing for receipts, insurance, and regulatory documents.
+- **Enterprise Security**: Audit logging, session tracking, and production-hardened middleware.
 
-### 🏢 Core Accounting & Invoicing
-- **Dynamic Invoice Engine**: Split-screen builder with real-time math, dynamic line items, auto-calculating GST, and instant PDF generation.
-- **Customer Directory**: Manage clients with full CRM capabilities, billing details, and outstanding balances.
-- **Expense Tracking**: Categorize operational and fleet expenses with responsive datatables and strict validation.
+## 🛠 Tech Stack
 
-### 🚛 Fleet & Maintenance Management
-- **Vehicle Directory**: Centralized management of active, inactive, and maintenance-bound vehicles.
-- **Fuel Logs**: Track mileage, fuel efficiency (KMPL/MPG), and automate cost calculations.
-- **Service Reminders**: Preventative maintenance tracking with color-coded alerts and upcoming service schedules.
+- **Framework**: Next.js 15 (App Router, Server Actions)
+- **Language**: TypeScript
+- **Database**: PostgreSQL with Prisma ORM
+- **UI/UX**: Tailwind CSS, Shadcn UI, Framer Motion, Recharts
+- **Auth**: NextAuth.js
+- **Billing**: Stripe Checkout & Customer Portal
+- **Storage**: UploadThing
+- **Monitoring**: Sentry & Winston Logging
+- **DevOps**: Docker, GitHub Actions
 
-### 📊 Dashboard & Analytics
-- **KPI Metrics**: Real-time aggregation of Revenue, Fleet Size, and Active alerts.
-- **Recharts Integration**: Beautiful interactive graphs mapping monthly profit/loss and fuel cost efficiency.
+## 📦 Installation
 
-### 🔒 Enterprise Security
-- **Role-Based Access Control**: Strict Admin/Staff tiers enforced by NextAuth.js.
-- **Middleware Protection**: Edge-layer route guarding.
-- **Zod Validation**: End-to-end type safety and strictly sanitized payload mutations.
-
----
-
-## 📸 Screenshots
-*(Coming Soon)*
-- `Dashboard Overview`
-- `Invoice Builder UI`
-- `Fleet Analytics`
-
----
-
-## 🛠️ Tech Stack
-
-- **Framework**: Next.js 15 (App Router)
-- **Frontend**: React 19, Tailwind CSS, ShadCN UI, Recharts, Lucide Icons
-- **Forms & State**: React Hook Form, Zod
-- **Backend**: Node.js, Next.js Server Actions
-- **Database**: PostgreSQL, Prisma ORM
-- **Auth**: NextAuth.js (Credentials Provider + bcrypt)
-- **Deployment**: Docker, Docker Compose
-
----
-
-## 🚀 Installation & Local Setup
-
-### 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/nexusfleet.git
-cd nexusfleet
-```
+# Clone the repository
+git clone https://github.com/vailism/nexusfleet.git
 
-### 2. Install dependencies
-```bash
+# Install dependencies
 npm install
-```
 
-### 3. Environment Variables
-Create a `.env` file in the root directory:
-```env
-# Database
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/nexusfleet"
+# Setup environment variables
+cp .env.example .env
 
-# Authentication
-NEXTAUTH_SECRET="your-super-secret-32-character-string"
-NEXTAUTH_URL="http://localhost:3000"
-```
-
-### 4. Database Setup
-```bash
+# Initialize database
 npx prisma generate
 npx prisma db push
-npx prisma db seed
-```
 
-### 5. Run the Development Server
-```bash
+# Start development server
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to view the application.
 
----
+## ⚙️ Environment Variables
+
+Required variables for full functionality:
+
+```env
+DATABASE_URL=
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=
+
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+
+UPLOADTHING_SECRET=
+UPLOADTHING_APP_ID=
+
+NEXT_PUBLIC_SENTRY_DSN=
+```
 
 ## 🐳 Docker Deployment
 
-NexusFleet is fully containerized for production environments.
+NexusFleet is optimized for containerized environments:
 
 ```bash
-# Build and start the PostgreSQL database and Next.js app in detached mode
-docker-compose up -d --build
-```
-The application will be available at `http://localhost:3000`.
-
----
-
-## 📂 Architecture Overview
-
-```text
-src/
-├── actions/       # Type-safe Server Actions (Prisma mutations)
-├── app/           # Next.js App Router (Pages, Layouts, API routes)
-├── components/    # Reusable UI (Forms, Charts, DataTables, ShadCN)
-├── lib/           # Utilities (Calculations, Zod Schemas, Prisma Client)
-├── middleware.ts  # Edge authentication routing
-prisma/
-├── schema.prisma  # Database models and relations
-├── seed.ts        # Dummy data generator
+docker-compose up --build
 ```
 
----
+## 🛣 Roadmap
 
-## 🗺️ Roadmap
-- [ ] Stripe Payment Gateway Integration
-- [ ] UploadThing Receipt/Document attachments
-- [ ] Multi-tenant Architecture (Organizations)
-- [ ] Driver Assignment & Scheduling Modules
-- [ ] Automated Email Invoice Delivery
-
----
+- [ ] Mobile App (React Native)
+- [ ] AI Route Optimization
+- [ ] Multi-currency support
+- [ ] WhatsApp/SMS notification integration
 
 ## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+MIT License - Copyright (c) 2026 NexusFleet.

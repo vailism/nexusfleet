@@ -1,8 +1,9 @@
 import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next-auth/next";
+import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 export default withAuth(
-  function middleware(req) {
+  function middleware(req: NextRequest) {
     // If the user is logged in but tries to access the login page, redirect to dashboard
     if (req.nextUrl.pathname.startsWith("/login")) {
       return NextResponse.redirect(new URL("/", req.url));

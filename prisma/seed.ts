@@ -1,4 +1,4 @@
-import { PrismaClient, Role, VehicleStatus } from '@prisma/client'
+import { PrismaClient, PlanTier, VehicleStatus } from '@prisma/client'
 import bcrypt from 'bcrypt'
 
 const prisma = new PrismaClient()
@@ -6,38 +6,55 @@ const prisma = new PrismaClient()
 async function main() {
   const hashedPassword = await bcrypt.hash('password123', 10)
 
-  // 1. Create Admin User
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@example.com' },
+  // 1. Create Organization
+  const org = await prisma.organization.upsert({
+    where: { id: 'seed-org-id' },
     update: {},
     create: {
-      email: 'admin@example.com',
-      name: 'Admin User',
-      password: hashedPassword,
-      role: Role.ADMIN,
+      id: 'seed-org-id',
+      name: 'NexusFleet Demo Corp',
+      planId: PlanTier.BUSINESS,
     },
   })
 
-  // 2. Create Customers
+  // 2. Create Admin User
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@example.com' },
+    update: {
+      memberships: {
+        upsert: {
+          where: { userId_organizationId: { userId: 'admin-user-id', organizationId: org.id } },
+          update: { role: 'OWNER' },
+          create: { organizationId: org.id, role: 'OWNER' }
+        }
+      }
+    },
+    create: {
+      id: 'admin-user-id',
+      email: 'admin@example.com',
+      name: 'Admin User',
+      password: hashedPassword,
+      memberships: {
+        create: {
+          organizationId: org.id,
+          role: 'OWNER',
+        }
+      }
+    },
+  })
+
+  // 3. Create Customers
   const customer1 = await prisma.customer.create({
     data: {
       name: 'Acme Corp',
       email: 'billing@acmecorp.com',
       phone: '+1-555-0100',
       address: '123 Business Rd, Tech City, TC 10001',
+      organizationId: org.id,
     },
   })
 
-  const customer2 = await prisma.customer.create({
-    data: {
-      name: 'Globex Inc',
-      email: 'accounts@globex.com',
-      phone: '+1-555-0200',
-      address: '456 Industry Way, Metro, ME 20002',
-    },
-  })
-
-  // 3. Create Vehicles
+  // 4. Create Vehicles
   const vehicle1 = await prisma.vehicle.create({
     data: {
       make: 'Ford',
@@ -47,41 +64,22 @@ async function main() {
       vin: '1FDRX4567890ABCDE',
       status: VehicleStatus.ACTIVE,
       driverName: 'John Doe',
+      organizationId: org.id,
     },
   })
 
-  const vehicle2 = await prisma.vehicle.create({
-    data: {
-      make: 'Mercedes',
-      model: 'Sprinter',
-      year: 2022,
-      licensePlate: 'XYZ-9876',
-      vin: 'WDB987654321ZYXWV',
-      status: VehicleStatus.ACTIVE,
-      driverName: 'Jane Smith',
-    },
-  })
-
-  // 4. Create Expenses
+  // 5. Create Expenses
   await prisma.expense.create({
     data: {
       amount: 150.00,
       category: 'Maintenance',
       description: 'Oil change and filter',
       vehicleId: vehicle1.id,
+      organizationId: org.id,
     },
   })
 
-  await prisma.expense.create({
-    data: {
-      amount: 65.50,
-      category: 'Tolls',
-      description: 'Highway tolls for trip to City A',
-      vehicleId: vehicle2.id,
-    },
-  })
-
-  // 5. Create Fuel Logs
+  // 6. Create Fuel Logs
   await prisma.fuelLog.create({
     data: {
       vehicleId: vehicle1.id,
@@ -91,15 +89,16 @@ async function main() {
     },
   })
 
-  // 6. Create Invoices
+  // 7. Create Invoices
   await prisma.invoice.create({
     data: {
       number: 'INV-2026-001',
       amount: 1000.00,
       tax: 100.00,
       total: 1100.00,
-      dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
+      dueDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
       customerId: customer1.id,
+      organizationId: org.id,
     },
   })
 

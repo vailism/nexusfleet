@@ -10,6 +10,7 @@ export const vehicleSchema = z.object({
   vin: z.string().optional(),
   status: z.nativeEnum(VehicleStatus).default(VehicleStatus.ACTIVE),
   driverName: z.string().optional(),
+  organizationId: z.string().min(1),
 });
 
 // Customers
@@ -18,6 +19,7 @@ export const customerSchema = z.object({
   email: z.string().email("Invalid email").optional().or(z.literal("")),
   phone: z.string().optional(),
   address: z.string().optional(),
+  organizationId: z.string().min(1),
 });
 
 // Expenses
@@ -48,6 +50,7 @@ export const invoiceSchema = z.object({
   notes: z.string().optional(),
   terms: z.string().optional(),
   items: z.array(invoiceItemSchema).min(1, "At least one item is required"),
+  organizationId: z.string().min(1),
 });
 
 // Fuel Logs
@@ -57,6 +60,7 @@ export const fuelLogSchema = z.object({
   cost: z.number().positive("Cost must be greater than 0"),
   odometer: z.number().positive("Odometer must be positive"),
   date: z.date().default(new Date()),
+  organizationId: z.string().min(1),
 });
 
 // Maintenance Records

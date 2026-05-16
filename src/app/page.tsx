@@ -4,6 +4,8 @@ import { RevenueExpenseChart } from "@/components/analytics/RevenueExpenseChart"
 import { ExpenseBreakdownChart } from "@/components/analytics/ExpenseBreakdownChart";
 import { MaintenanceReminderCard } from "@/components/analytics/MaintenanceReminderCard";
 import { ActivityFeed } from "@/components/analytics/ActivityFeed";
+import { SmartInsightsPanel } from "@/components/analytics/SmartInsightsPanel";
+import { generateBusinessInsights } from "@/lib/ai-insights";
 import prisma from "@/lib/prisma";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,7 +13,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function DashboardPage() {
-  const [kpis, revExpData, expBreakdown, maintenanceRecords] = await Promise.all([
+  const orgId = "dummy-org-id"; // In real app, get from session
+  
+  const [kpis, revExpData, expBreakdown, maintenanceRecords, aiInsights] = await Promise.all([
     getDashboardKPIs(),
     getRevenueExpenseTrends(),
     getExpenseBreakdown(),
@@ -19,6 +23,7 @@ export default async function DashboardPage() {
       include: { vehicle: true },
       orderBy: { nextDueDate: 'asc' },
     }),
+    generateBusinessInsights(orgId)
   ]);
 
   // Format maintenance records for the card
@@ -57,7 +62,11 @@ export default async function DashboardPage() {
           </div>
         </div>
         
-        <div className="col-span-1 lg:col-span-3">
+        <div className="col-span-1 lg:col-span-3 space-y-6">
+          <Suspense fallback={<Skeleton className="h-64 w-full rounded-xl" />}>
+            <SmartInsightsPanel insights={aiInsights as any} />
+          </Suspense>
+          
           <Suspense fallback={<Skeleton className="h-full w-full min-h-[600px] rounded-xl" />}>
             <ActivityFeed />
           </Suspense>
